@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>UrbanWash Laundry Hub</title>
+
+  <!-- Favicon & Icons -->
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <!-- PWA -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="UrbanWash">
+  <meta name="application-name" content="UrbanWash">
+  <meta name="theme-color" content="#1A3A5C">
+  <meta name="description" content="UrbanWash Laundry Hub — Pick-Up &amp; Delivery laundry service in Cebu City, Talisay, Carcar, Minglanilla, Naga, Toledo City and San Fernando.">
+
+  <!-- MS Tiles -->
+  <meta name="msapplication-TileImage" content="icon.png">
+  <meta name="msapplication-TileColor" content="#1A3A5C">
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <!-- Open Graph -->
+  <meta property="og:title"       content="UrbanWash Laundry Hub">
+  <meta property="og:description" content="Not your ordinary laundromat! Book laundry pick-up &amp; delivery in Cebu.">
+  <meta property="og:type"        content="website">
+  <meta property="og:image"       content="icon.png">
+  <meta name="twitter:card"       content="summary">
+  <meta name="twitter:title"      content="UrbanWash Laundry Hub">
+  <meta name="twitter:description" content="Pick-Up &amp; Delivery laundry in Cebu City &amp; nearby areas.">
+
+  <!-- Manifest — required for real PWA install -->
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0F1C2E; width: 100vw; height: 100vh; overflow: hidden; }
+
+    /* ── SPLASH ── */
+    #splash {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(ellipse at center, #1A3A5C 0%, #0F1C2E 70%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 999; transition: opacity 0.6s ease;
+    }
+
+    #splash .logo-wrap {
+      position: relative;
+      width: 160px; height: 160px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Outer spinning ring — teal */
+    #splash .logo-wrap::before {
+      content: '';
+      position: absolute; inset: -8px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #0D7377;
+      border-right-color: #0D7377;
+      animation: spin 2s linear infinite;
+    }
+
+    /* Inner spinning ring — gold (reverse) */
+    #splash .logo-wrap::after {
+      content: '';
+      position: absolute; inset: -14px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-bottom-color: #D4A017;
+      border-left-color: #D4A017;
+      animation: spin 3s linear infinite reverse;
+    }
+
+    #splash img {
+      width: 150px; height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow:
+        0 0 0 3px #0D7377,
+        0 0 40px rgba(13,115,119,0.5),
+        0 10px 40px rgba(0,0,0,0.8);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* Fallback logo — shown if icon-192.png fails to load */
+    #splash .logo-fallback {
+      width: 150px; height: 150px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1A3A5C, #0D7377);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      box-shadow:
+        0 0 0 3px #0D7377,
+        0 0 40px rgba(13,115,119,0.5),
+        0 10px 40px rgba(0,0,0,0.8);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    #splash .logo-fallback svg {
+      width: 56px; height: 56px; color: #fff;
+    }
+
+    #splash .logo-fallback span {
+      color: rgba(255,255,255,0.85);
+      font-size: 10px; font-weight: 800;
+      margin-top: 6px; letter-spacing: 1.5px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    #splash .app-name {
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 30px; font-weight: 900;
+      margin-top: 28px; letter-spacing: 1px;
+      text-shadow: 0 0 20px rgba(13,115,119,0.6), 0 2px 8px rgba(0,0,0,0.8);
+    }
+
+    #splash .app-sub {
+      color: rgba(255,255,255,0.6);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12px; font-weight: 500;
+      margin-top: 5px; letter-spacing: 3px; text-transform: uppercase;
+    }
+
+    #splash .app-tagline {
+      color: rgba(212,160,23,0.85);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px; font-weight: 600;
+      margin-top: 5px; letter-spacing: 0.5px;
+    }
+
+    #splash .loading-bar-wrap {
+      margin-top: 36px; width: 180px; height: 3px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 4px; overflow: hidden;
+    }
+
+    #splash .loading-bar {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #0D7377, #D4A017);
+      border-radius: 4px;
+      animation: loadbar 4s ease-in-out forwards;
+      box-shadow: 0 0 10px rgba(13,115,119,0.8);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.05); }
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes loadbar {
+      0%   { width: 0%; }
+      40%  { width: 60%; }
+      80%  { width: 85%; }
+      100% { width: 100%; }
+    }
+
+    /* ── APP IFRAME ── */
+    #app-frame {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none; z-index: 1;
+    }
+
+    /* ── INSTALL BANNER ── */
+    #installBanner {
+      display: none;
+      position: fixed; bottom: 20px; left: 12px; right: 12px;
+      z-index: 998;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(26,58,92,0.2);
+      border: 1.5px solid #E2EAF4;
+      padding: 14px 16px;
+      align-items: center; gap: 12px;
+    }
+
+    #installBanner img {
+      width: 44px; height: 44px;
+      border-radius: 12px; flex-shrink: 0;
+    }
+
+    #installBanner .ib-text { flex: 1; min-width: 0; }
+
+    #installBanner .ib-title {
+      font-weight: 800; font-size: 14px; color: #0F1C2E;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    #installBanner .ib-sub {
+      font-size: 12px; color: #6B7FA3; margin-top: 2px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    #installBanner .ib-install {
+      background: linear-gradient(135deg, #1A3A5C, #0D7377);
+      color: #fff; border: none; border-radius: 10px;
+      padding: 9px 16px; font-size: 12px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    #installBanner .ib-close {
+      background: none; border: none; color: #6B7FA3;
+      font-size: 20px; cursor: pointer; padding: 4px;
+      flex-shrink: 0; line-height: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ SPLASH SCREEN ═══ -->
+  <div id="splash">
+    <div class="logo-wrap">
+      <img
+        src="icon.png"
+        alt="UrbanWash Laundry Hub"
+        onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';"
+      >
+      <div class="logo-fallback" id="logo-fallback" style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M6.5 12a5.5 5.5 0 0 1 11 0"/>
+          <circle cx="12" cy="12" r="2.5"/>
+          <path d="M12 9.5V7M12 17v-2.5"/>
+        </svg>
+        <span>URBANWASH</span>
+      </div>
+    </div>
+    <div class="app-name">UrbanWash</div>
+    <div class="app-sub">Laundry Hub</div>
+    <div class="app-tagline">Pick-Up &amp; Delivery · Cebu City &amp; Nearby Areas</div>
+    <div class="loading-bar-wrap">
+      <div class="loading-bar"></div>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN APP (replace src with your GAS Web App URL) ═══ -->
+  <iframe
+    id="app-frame"
+    src="https://script.google.com/macros/s/AKfycbxsmJDfuKYkOQjc2NhnkuJfIrNEc_WS2xPF88JGAiXEuyLdjXZnH-UD2FC45jD10o39/exec"
+    allow="fullscreen"
+    allowfullscreen
+  ></iframe>
+
+  <!-- ═══ PWA INSTALL BANNER ═══ -->
+  <div id="installBanner">
+    <img src="icon.png" alt="UrbanWash">
+    <div class="ib-text">
+      <div class="ib-title">Add to Home Screen</div>
+      <div class="ib-sub">Install UrbanWash for quick access</div>
+    </div>
+    <button class="ib-install" onclick="triggerInstall()">Install</button>
+    <button class="ib-close"   onclick="dismissInstall()">✕</button>
+  </div>
+
+  <script>
+    // ── Service Worker registration (required for PWA) ──
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js')
+          .then(function (reg) { console.log('[SW] Registered:', reg.scope); })
+          .catch(function (err) { console.warn('[SW] Registration failed:', err); });
+      });
+    }
+
+    // ── Splash: dismiss when iframe finishes loading ──
+    var frame  = document.getElementById('app-frame');
+    var splash = document.getElementById('splash');
+
+    frame.onload = function () {
+      setTimeout(function () {
+        splash.style.opacity = '0';
+        setTimeout(function () { splash.style.display = 'none'; }, 600);
+      }, 1000);
+    };
+
+    // ── Safety fallback: always dismiss after 6 seconds ──
+    setTimeout(function () {
+      splash.style.opacity = '0';
+      setTimeout(function () { splash.style.display = 'none'; }, 600);
+    }, 6000);
+
+    // ── PWA Install prompt ──
+    var deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBanner').style.display = 'flex';
+    });
+
+    window.addEventListener('appinstalled', function () {
+      document.getElementById('installBanner').style.display = 'none';
+      deferredPrompt = null;
+    });
+
+    function triggerInstall() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function () { deferredPrompt = null; });
+    }
+
+    function dismissInstall() {
+      document.getElementById('installBanner').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
